@@ -1,0 +1,1235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Foodbank × AI — 12-Month Roadmap</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Cabinet+Grotesk:wght@400;500;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --g:#1B5E2A;--g2:#2E8B46;--g3:#72C68A;--gp:#EAF5ED;
+  --o:#C85A14;--op:#FDF0E7;
+  --p:#4A1D96;--pp:#F3F0FF;--pl:#C4B5FD;
+  --ink:#0C1A0E;--mid:#2E3D30;--muted:#6E8070;
+  --border:#D4E5D8;--cream:#F7FAF7;--white:#fff;
+  --card:#fff;
+  --ease:cubic-bezier(0.23,1,0.32,1);
+}
+html{scroll-behavior:smooth}
+body{font-family:'Cabinet Grotesk',sans-serif;background:#080F09;color:var(--ink);overflow-x:hidden;cursor:none}
+
+/* CUSTOM CURSOR */
+#cursor{position:fixed;width:10px;height:10px;background:#fff;border-radius:50%;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width .25s var(--ease),height .25s var(--ease);mix-blend-mode:exclusion;will-change:left,top}
+#cursor-trail{position:fixed;width:36px;height:36px;border:1px solid rgba(255,255,255,.22);border-radius:50%;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:left .14s var(--ease),top .14s var(--ease),width .3s var(--ease),height .3s var(--ease);will-change:left,top}
+
+/* NOISE OVERLAY */
+body::after{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");pointer-events:none;z-index:9990;opacity:0.55}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:2px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--g2);border-radius:2px}
+
+/* SCENE */
+.scene{will-change:transform;transform-origin:50% 0%;transform-style:preserve-3d}
+
+/* CINEMATIC INTRO */
+#cinematic{position:fixed;inset:0;z-index:1000;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;transition:opacity 1.2s ease,visibility 1.2s ease;overflow:hidden}
+#cinematic::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 70% at 50% 50%,rgba(27,94,42,.12) 0%,transparent 70%);animation:cin-pulse 4s ease-in-out infinite}
+@keyframes cin-pulse{0%,100%{opacity:.5}50%{opacity:1}}
+#cinematic::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(255,255,255,.007) 2px,rgba(255,255,255,.007) 4px);pointer-events:none}
+#cinematic.gone{opacity:0;visibility:hidden;pointer-events:none}
+.cin-line{font-family:'Fraunces',serif;font-size:clamp(28px,5vw,64px);color:#fff;text-align:center;opacity:0;transform:translateY(16px);transition:opacity .7s ease,transform .7s ease;line-height:1.15;padding:0 24px;position:relative;z-index:1}
+.cin-line em{color:var(--g3);font-style:italic}
+.cin-line.show{opacity:1;transform:none}
+.cin-skip{position:absolute;bottom:32px;right:32px;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,.28);cursor:none;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);font-family:'Cabinet Grotesk',sans-serif;padding:8px 18px;border-radius:50px;transition:color .3s,border-color .3s,background .3s;backdrop-filter:blur(8px)}
+.cin-skip:hover{color:rgba(255,255,255,.8);border-color:rgba(255,255,255,.28);background:rgba(255,255,255,.07)}
+
+/* SCROLL PROGRESS */
+#scroll-progress{position:fixed;top:0;left:0;height:2px;background:linear-gradient(90deg,var(--g),var(--g3),var(--p));z-index:9997;width:0%;box-shadow:0 0 8px rgba(114,198,138,.45)}
+
+/* NAV DOTS */
+#nav-dots{position:fixed;right:26px;top:50%;transform:translateY(-50%);z-index:9000;display:flex;flex-direction:column;gap:10px}
+.nav-dot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.18);cursor:none;transition:all .4s var(--ease);position:relative}
+.nav-dot::before{content:attr(data-label);position:absolute;right:18px;top:50%;transform:translateY(-50%);white-space:nowrap;font-size:9px;letter-spacing:2px;color:rgba(255,255,255,.45);text-transform:uppercase;opacity:0;transition:opacity .3s;pointer-events:none}
+.nav-dot:hover::before,.nav-dot.active::before{opacity:1}
+.nav-dot.active{background:var(--g3);box-shadow:0 0 10px var(--g3),0 0 20px rgba(114,198,138,.28);width:8px;height:8px}
+
+/* HERO */
+.hero{min-height:100vh;background:#080F09;display:flex;flex-direction:column;justify-content:flex-end;padding:60px;position:relative;overflow:hidden}
+.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 65% 55% at 72% 28%,rgba(43,130,67,.22) 0%,transparent 65%),radial-gradient(ellipse 45% 45% at 18% 82%,rgba(200,90,20,.12) 0%,transparent 55%),radial-gradient(ellipse 50% 60% at 50% 50%,rgba(27,94,42,.06) 0%,transparent 80%)}
+.hero-particles{position:absolute;inset:0;overflow:hidden}
+.particle{position:absolute;border-radius:50%;animation:float-particle linear infinite;opacity:0}
+@keyframes float-particle{0%{transform:translateY(100vh) scale(0);opacity:0}10%{opacity:1}90%{opacity:1}100%{transform:translateY(-10vh) scale(1);opacity:0}}
+.hero-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);background-size:80px 80px;mask-image:radial-gradient(ellipse 80% 80% at center,black 30%,transparent 100%)}
+.hero-sweep{position:absolute;inset:0;background:linear-gradient(105deg,transparent 40%,rgba(114,198,138,.04) 50%,transparent 60%);animation:sweep 7s ease-in-out infinite}
+@keyframes sweep{0%,100%{transform:translateX(-100%)}50%{transform:translateX(100%)}}
+.hero-eyebrow{font-size:10px;font-weight:700;letter-spacing:4px;text-transform:uppercase;color:var(--g3);margin-bottom:28px;position:relative;z-index:1;opacity:0;animation:fadeUp .7s .2s ease forwards;display:inline-flex;align-items:center;gap:12px}
+.hero-eyebrow::before{content:'';display:inline-block;width:32px;height:1px;background:var(--g3);opacity:.5}
+.hero h1{font-family:'Fraunces',serif;font-size:clamp(52px,9vw,120px);font-weight:900;line-height:.93;color:#fff;position:relative;z-index:1;margin-bottom:32px;opacity:0;animation:fadeUp .7s .35s ease forwards;letter-spacing:-.02em;overflow:hidden}
+.hero h1 em{color:var(--g3);font-style:italic}
+.hero-sub{font-size:17px;color:rgba(255,255,255,.5);max-width:460px;line-height:1.85;position:relative;z-index:1;margin-bottom:52px;opacity:0;animation:fadeUp .7s .5s ease forwards}
+.pills{display:flex;gap:9px;flex-wrap:wrap;position:relative;z-index:1;opacity:0;animation:fadeUp .7s .65s ease forwards}
+.pill{border:1px solid rgba(255,255,255,.1);border-radius:50px;padding:7px 18px;font-size:12px;font-weight:600;color:rgba(255,255,255,.6);background:rgba(255,255,255,.04);backdrop-filter:blur(8px);transition:all .3s var(--ease);cursor:none}
+.pill:hover{background:rgba(114,198,138,.1);border-color:rgba(114,198,138,.3);color:var(--g3);transform:translateY(-2px)}
+.scroll-cue{position:absolute;bottom:40px;right:60px;display:flex;flex-direction:column;align-items:center;gap:8px;opacity:0;animation:fadeUp .7s .85s ease forwards}
+.scroll-cue span{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,.2)}
+.scroll-line-v{width:1px;height:56px;background:linear-gradient(to bottom,rgba(114,198,138,.4),transparent);animation:scroll-pulse 2s ease-in-out infinite}
+@keyframes scroll-pulse{0%,100%{opacity:.3;height:56px}50%{opacity:1;height:72px}}
+
+/* SECTION DIVIDER */
+.s-divider{height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.06) 20%,rgba(114,198,138,.1) 50%,rgba(255,255,255,.06) 80%,transparent)}
+
+/* GENERAL */
+.wrap{max-width:1040px;margin:0 auto;padding:80px 40px}
+.eyebrow{font-size:10px;font-weight:700;letter-spacing:4px;text-transform:uppercase;color:var(--g3);margin-bottom:10px;display:inline-flex;align-items:center;gap:10px}
+.eyebrow::before{content:'';display:inline-block;width:22px;height:1px;background:currentColor;opacity:.5}
+.heading{font-family:'Fraunces',serif;font-size:clamp(28px,4vw,48px);font-weight:700;line-height:1.08;color:#fff;margin-bottom:14px;letter-spacing:-.02em}
+.body-txt{font-size:15px;color:rgba(255,255,255,.42);line-height:1.88;max-width:600px;margin-bottom:44px}
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .8s var(--ease),transform .8s var(--ease)}
+.reveal.vis{opacity:1;transform:none}
+
+/* MISSION */
+.mission-wrap{margin-bottom:80px}
+.mission-card{background:linear-gradient(135deg,#1a5c28 0%,#0f3318 60%,#091e0d 100%);color:#fff;border-radius:28px;padding:52px 56px;position:relative;overflow:hidden;border:1px solid rgba(114,198,138,.12);box-shadow:0 32px 80px rgba(0,0,0,.22),0 8px 24px rgba(0,0,0,.12),inset 0 1px 0 rgba(255,255,255,.05);transition:transform .5s var(--ease),box-shadow .5s ease}
+.mission-card:hover{transform:translateY(-4px);box-shadow:0 48px 100px rgba(0,0,0,.3),0 0 60px rgba(114,198,138,.06),inset 0 1px 0 rgba(255,255,255,.08)}
+.mission-card::before{content:'';position:absolute;top:-120px;right:-120px;width:480px;height:480px;border-radius:50%;background:radial-gradient(circle,rgba(114,198,138,.1) 0%,transparent 70%);animation:orb-breathe 6s ease-in-out infinite}
+@keyframes orb-breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.15)}}
+.mission-card::after{content:'NO\A FOOD\A WASTED';white-space:pre;position:absolute;right:52px;top:50%;transform:translateY(-50%);font-family:'Fraunces',serif;font-size:80px;font-weight:900;line-height:1;color:rgba(255,255,255,.04);pointer-events:none;text-align:right;letter-spacing:-.03em}
+.mission-card p{font-size:18px;line-height:1.95;color:rgba(255,255,255,.82);max-width:640px;position:relative;z-index:1}
+.mission-card strong{color:var(--g3)}
+
+/* TWO ENGINES */
+.engines-section{margin-bottom:80px}
+.engines-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;position:relative}
+.engines-grid::after{content:'';position:absolute;left:50%;top:8%;bottom:8%;width:1px;background:linear-gradient(to bottom,transparent,rgba(255,255,255,.06) 30%,rgba(255,255,255,.06) 70%,transparent);pointer-events:none;transform:translateX(-50%)}
+.engine-card{border-radius:28px;padding:44px 40px 40px;position:relative;overflow:hidden;min-height:380px;display:flex;flex-direction:column;cursor:none;transition:transform .5s var(--ease),box-shadow .5s ease;border:1px solid rgba(255,255,255,.06)}
+.engine-card:hover{transform:translateY(-12px) scale(1.015);box-shadow:0 50px 100px rgba(0,0,0,.35),0 0 80px rgba(0,0,0,.18)}
+.engine-card.ops{background:linear-gradient(145deg,#1c6030 0%,#0e3618 55%,#061309 100%)}
+.engine-card.comm{background:linear-gradient(145deg,#3c1682 0%,#1e0a4a 55%,#0d0525 100%)}
+.engine-card::before{content:'';position:absolute;width:400px;height:400px;border-radius:50%;top:-100px;right:-100px;pointer-events:none;transition:transform .7s var(--ease),opacity .7s ease;opacity:.8}
+.engine-card:hover::before{transform:scale(1.3) translateY(-20px);opacity:1}
+.engine-card.ops::before{background:radial-gradient(circle,rgba(114,198,138,.2) 0%,transparent 70%)}
+.engine-card.comm::before{background:radial-gradient(circle,rgba(196,181,253,.2) 0%,transparent 70%)}
+.engine-card::after{content:'';position:absolute;width:200px;height:200px;border-radius:50%;bottom:-60px;left:-40px;pointer-events:none;transition:transform .7s var(--ease)}
+.engine-card:hover::after{transform:scale(1.4) translateX(20px)}
+.engine-card.ops::after{background:radial-gradient(circle,rgba(46,139,70,.15) 0%,transparent 70%)}
+.engine-card.comm::after{background:radial-gradient(circle,rgba(74,29,150,.15) 0%,transparent 70%)}
+.card-shimmer{position:absolute;inset:0;background:linear-gradient(105deg,transparent 40%,rgba(255,255,255,.03) 50%,transparent 60%);transform:translateX(-100%);transition:transform .7s var(--ease);pointer-events:none;z-index:0}
+.engine-card:hover .card-shimmer{transform:translateX(100%)}
+.eng-icon{width:56px;height:56px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:26px;margin-bottom:20px;position:relative;z-index:1;flex-shrink:0;transition:transform .4s var(--ease)}
+.engine-card:hover .eng-icon{transform:scale(1.1) rotate(-5deg)}
+.engine-card.ops .eng-icon{background:rgba(114,198,138,.12);border:1px solid rgba(114,198,138,.22)}
+.engine-card.comm .eng-icon{background:rgba(196,181,253,.12);border:1px solid rgba(196,181,253,.22)}
+.eng-eyebrow{font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;margin-bottom:10px;position:relative;z-index:1}
+.engine-card.ops .eng-eyebrow{color:var(--g3)}
+.engine-card.comm .eng-eyebrow{color:var(--pl)}
+.engine-card h3{font-family:'Fraunces',serif;font-size:clamp(20px,2.5vw,30px);font-weight:700;line-height:1.08;color:#fff;margin-bottom:10px;position:relative;z-index:1;letter-spacing:-.01em}
+.engine-card .eng-sub{font-size:13px;color:rgba(255,255,255,.45);line-height:1.75;margin-bottom:26px;position:relative;z-index:1}
+.eng-items{list-style:none;display:flex;flex-direction:column;gap:10px;position:relative;z-index:1;margin-top:auto}
+.eng-items li{font-size:13px;color:rgba(255,255,255,.75);display:flex;align-items:flex-start;gap:10px;line-height:1.55;padding:8px 12px;border-radius:8px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.05);transition:background .3s ease,border-color .3s ease}
+.engine-card:hover .eng-items li{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.08)}
+.eng-arr{font-size:12px;font-weight:800;flex-shrink:0;margin-top:1px}
+.engine-card.ops .eng-arr{color:var(--g3)}
+.engine-card.comm .eng-arr{color:var(--pl)}
+.eng-wm{position:absolute;bottom:-28px;right:-8px;font-size:130px;line-height:1;pointer-events:none;user-select:none;filter:blur(1px);transition:transform .7s var(--ease),opacity .5s ease;opacity:.5}
+.engine-card:hover .eng-wm{transform:scale(1.1);opacity:.8}
+.engine-card.ops .eng-wm{color:rgba(114,198,138,.07)}
+.engine-card.comm .eng-wm{color:rgba(196,181,253,.07)}
+
+/* PILLARS */
+.pillars{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:80px}
+.pillar{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:20px;padding:30px 26px;transition:transform .35s var(--ease),box-shadow .35s ease,border-color .35s ease,background .35s ease;position:relative;overflow:hidden;cursor:none}
+.pillar::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(114,198,138,.04) 0%,transparent 60%);opacity:0;transition:opacity .4s ease}
+.pillar:hover{transform:translateY(-8px) scale(1.02);box-shadow:0 24px 60px rgba(0,0,0,.28),0 0 0 1px rgba(114,198,138,.12);border-color:rgba(114,198,138,.2);background:rgba(255,255,255,.05)}
+.pillar:hover::before{opacity:1}
+.p-ico{font-size:28px;margin-bottom:18px;display:block;transition:transform .4s var(--ease)}
+.pillar:hover .p-ico{transform:scale(1.15) rotate(-8deg)}
+.pillar h3{font-size:13px;font-weight:700;margin-bottom:8px;color:#fff}
+.pillar p{font-size:12px;color:rgba(255,255,255,.42);line-height:1.7}
+
+/* AMBASSADOR */
+.amb-outer{margin-bottom:80px;border-radius:32px;overflow:hidden;position:relative;border:1px solid rgba(255,255,255,.07);box-shadow:0 32px 80px rgba(0,0,0,.22),0 8px 24px rgba(0,0,0,.12)}
+.amb-stage{background:linear-gradient(145deg,#0a0a14 0%,#0f0820 60%,#060611 100%);padding:72px 60px 56px;position:relative;overflow:hidden;display:grid;grid-template-columns:1fr 420px;gap:60px;align-items:center}
+.amb-stage::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 55% 85% at 82% 52%,rgba(74,29,150,.28) 0%,transparent 60%),radial-gradient(ellipse 40% 45% at 8% 82%,rgba(43,130,67,.14) 0%,transparent 55%);animation:amb-breathe 8s ease-in-out infinite}
+@keyframes amb-breathe{0%,100%{opacity:1}50%{opacity:.8}}
+.amb-stage::after{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.015) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.015) 1px,transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 70% 70% at 80% 50%,black 20%,transparent 80%)}
+.amb-text{position:relative;z-index:1}
+.amb-tag{display:inline-flex;align-items:center;gap:8px;background:rgba(196,181,253,.1);border:1px solid rgba(196,181,253,.22);border-radius:50px;padding:6px 16px;margin-bottom:24px;backdrop-filter:blur(8px)}
+.amb-tag span{font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--pl)}
+.live-dot{width:7px;height:7px;border-radius:50%;background:#22C55E;animation:pingDot 1.4s ease-out infinite;flex-shrink:0}
+@keyframes pingDot{0%{box-shadow:0 0 0 0 rgba(34,197,94,.6)}70%{box-shadow:0 0 0 10px rgba(34,197,94,0)}100%{box-shadow:0 0 0 0 rgba(34,197,94,0)}}
+.amb-text h2{font-family:'Fraunces',serif;font-size:clamp(32px,4vw,56px);font-weight:900;line-height:1.03;color:#fff;margin-bottom:22px;letter-spacing:-.02em}
+.amb-text h2 em{color:var(--pl);font-style:italic}
+.amb-text p{font-size:15px;color:rgba(255,255,255,.52);line-height:1.9;margin-bottom:32px;max-width:420px}
+.amb-traits{list-style:none;display:flex;flex-direction:column;gap:12px}
+.amb-traits li{display:flex;align-items:flex-start;gap:12px;font-size:13px;color:rgba(255,255,255,.7);line-height:1.65;padding:12px 16px;border-radius:12px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.05);transition:background .3s ease,border-color .3s ease,transform .3s var(--ease)}
+.amb-traits li:hover{background:rgba(196,181,253,.05);border-color:rgba(196,181,253,.12);transform:translateX(4px)}
+.trait-ck{width:22px;height:22px;border-radius:50%;background:rgba(114,198,138,.15);border:1px solid rgba(114,198,138,.3);display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;margin-top:1px;color:var(--g3)}
+.avatar-card{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:0}
+.avatar-frame{position:relative;width:260px;height:310px;flex-shrink:0}
+.glow-ring{position:absolute;border-radius:50%;transform:translate(-50%,-50%);top:42%;left:50%}
+.ring1{width:280px;height:280px;border:1px solid rgba(196,181,253,.1);animation:spinSlow 20s linear infinite}
+.ring2{width:220px;height:220px;border:1px solid rgba(196,181,253,.15);animation:spinSlow 14s linear infinite reverse}
+.ring3{width:360px;height:360px;border:1px solid rgba(196,181,253,.04);animation:spinSlow 32s linear infinite}
+@keyframes spinSlow{to{transform:translate(-50%,-50%) rotate(360deg)}}
+.avatar-circle{position:absolute;width:180px;height:180px;top:50%;left:50%;transform:translate(-50%,-56%);border-radius:50%;background:linear-gradient(145deg,#7c3aed,#4A1D96,#2D1B69);display:flex;align-items:center;justify-content:center;font-size:80px;animation:floatAv 5s ease-in-out infinite;box-shadow:0 0 60px rgba(124,58,237,.4),0 0 120px rgba(124,58,237,.15),0 0 200px rgba(74,29,150,.08)}
+@keyframes floatAv{0%,100%{transform:translate(-50%,-56%) translateY(0)}50%{transform:translate(-50%,-56%) translateY(-14px)}}
+.av-status{position:absolute;top:52%;right:50px;background:rgba(255,255,255,.08);backdrop-filter:blur(16px);border:1px solid rgba(255,255,255,.12);border-radius:50px;padding:6px 14px;display:flex;align-items:center;gap:7px;white-space:nowrap;box-shadow:0 4px 16px rgba(0,0,0,.2)}
+.av-status span{font-size:11px;font-weight:600;color:#fff}
+.speech-bubble{position:absolute;bottom:12px;left:-20px;right:-20px;background:rgba(20,10,40,.6);border:1px solid rgba(196,181,253,.15);backdrop-filter:blur(20px);border-radius:18px;padding:18px 20px;box-shadow:0 8px 32px rgba(0,0,0,.3)}
+.bubble-name{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--pl);margin-bottom:6px}
+.bubble-text{font-size:12px;color:rgba(255,255,255,.8);line-height:1.65;min-height:52px}
+.cursor{display:inline-block;width:2px;height:13px;background:var(--pl);margin-left:2px;vertical-align:text-bottom;animation:blink .9s step-end infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+.story-strip{background:rgba(255,255,255,.02);border-top:1px solid rgba(255,255,255,.06);padding:44px 56px}
+.story-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.story-card{border-radius:16px;padding:26px 22px;position:relative;overflow:hidden;transition:transform .4s var(--ease),box-shadow .4s ease;cursor:none}
+.story-card:hover{transform:translateY(-6px) scale(1.02);box-shadow:0 20px 50px rgba(0,0,0,.25)}
+.story-card.s1{background:rgba(27,94,42,.2);border:1px solid rgba(114,198,138,.2)}
+.story-card.s2{background:rgba(74,29,150,.2);border:1px solid rgba(196,181,253,.2)}
+.story-card.s3{background:rgba(200,90,20,.15);border:1px solid rgba(200,90,20,.25)}
+.story-date{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.3);margin-bottom:10px}
+.story-card h4{font-family:'Fraunces',serif;font-size:15px;font-weight:700;margin-bottom:8px;color:#fff;line-height:1.35}
+.story-card p{font-size:12px;color:rgba(255,255,255,.48);line-height:1.65}
+.story-stats{display:flex;gap:12px;margin-top:14px;flex-wrap:wrap}
+.stat-pill{font-size:10px;font-weight:600;color:rgba(255,255,255,.58);background:rgba(255,255,255,.07);border-radius:50px;padding:3px 10px;border:1px solid rgba(255,255,255,.08)}
+
+/* TIMELINE */
+.tl-wrap{margin-bottom:80px}
+.phase{display:grid;grid-template-columns:148px 1fr;gap:28px;position:relative}
+.phase+.phase{margin-top:8px}
+.phase-lbl{text-align:right;padding-top:26px}
+.badge{display:inline-flex;color:#fff;font-size:9px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;padding:5px 13px;border-radius:50px;margin-bottom:6px;box-shadow:0 4px 12px rgba(0,0,0,.2)}
+.b1{background:linear-gradient(135deg,#1B5E2A,#2E8B46)}.b2{background:linear-gradient(135deg,#C85A14,#e07030)}.b3{background:linear-gradient(135deg,#4A1D96,#6D28D9)}.b4{background:linear-gradient(135deg,#0C1A0E,#2E3D30)}
+.pmo{font-size:11px;color:rgba(255,255,255,.32);line-height:1.55}
+.pbody{border-left:2px solid rgba(255,255,255,.08);padding:24px 0 48px 36px;position:relative}
+.pbody::before{content:'';position:absolute;left:-8px;top:30px;width:14px;height:14px;border-radius:50%;border:2px solid #080F09;box-shadow:0 0 0 1px rgba(255,255,255,.1)}
+.c1::before{background:var(--g)}.c2::before{background:var(--o)}.c3::before{background:var(--p)}.c4::before{background:#2E3D30}
+.ptitle{font-family:'Fraunces',serif;font-size:24px;font-weight:700;color:#fff;margin-bottom:4px;letter-spacing:-.01em}
+.ptag{font-size:13px;color:rgba(255,255,255,.3);font-style:italic;margin-bottom:22px}
+.dels{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:16px}
+.del{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:14px 16px;display:flex;gap:12px;align-items:flex-start;transition:background .3s ease,border-color .3s ease,transform .3s var(--ease);cursor:none}
+.del:hover{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.12);transform:translateX(3px)}
+.di{font-size:16px;flex-shrink:0;margin-top:1px}
+.dt strong{display:block;font-size:11px;font-weight:700;margin-bottom:3px;color:#fff}
+.dt span{font-size:11px;color:rgba(255,255,255,.38);line-height:1.55}
+.outcome{border-radius:12px;padding:14px 18px;display:flex;align-items:center;gap:12px;border:1px solid}
+.oc1{background:rgba(27,94,42,.15);border-color:rgba(114,198,138,.15)}
+.oc2{background:rgba(200,90,20,.12);border-color:rgba(200,90,20,.2)}
+.oc3{background:rgba(74,29,150,.15);border-color:rgba(196,181,253,.15)}
+.oc4{background:rgba(255,255,255,.04);border-color:rgba(255,255,255,.08)}
+.outcome p{font-size:11px;color:rgba(255,255,255,.48);line-height:1.55}
+.outcome p strong{color:rgba(255,255,255,.85)}
+
+/* RESULTS */
+.results{background:linear-gradient(145deg,#0a1a0c 0%,#080F09 60%,#0a0a14 100%);border-radius:28px;padding:60px 52px;margin-bottom:80px;border:1px solid rgba(255,255,255,.07);position:relative;overflow:hidden;box-shadow:0 32px 80px rgba(0,0,0,.22),0 8px 24px rgba(0,0,0,.12)}
+.results::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 60% at 50% 0%,rgba(114,198,138,.06) 0%,transparent 70%)}
+.results .eyebrow{color:var(--g3)}
+.results .heading{color:#fff}
+.results .body-txt{color:rgba(255,255,255,.42)}
+.rgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+.rc{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:28px 22px;text-align:center;position:relative;z-index:1;transition:transform .4s var(--ease),box-shadow .4s ease,border-color .4s ease,background .4s ease;cursor:none;overflow:hidden}
+.rc::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(114,198,138,.06) 0%,transparent 60%);opacity:0;transition:opacity .4s ease}
+.rc:hover{transform:translateY(-8px) scale(1.03);box-shadow:0 20px 50px rgba(0,0,0,.25),0 0 0 1px rgba(114,198,138,.15);border-color:rgba(114,198,138,.2);background:rgba(255,255,255,.06)}
+.rc:hover::before{opacity:1}
+.rc .ico{font-size:32px;margin-bottom:14px;display:block;transition:transform .4s var(--ease)}
+.rc:hover .ico{transform:scale(1.15) translateY(-3px)}
+.rc h3{font-size:12px;font-weight:700;color:#fff;margin-bottom:8px;line-height:1.4}
+.rc p{font-size:11px;color:rgba(255,255,255,.38);line-height:1.6}
+
+/* CLOSING */
+.closing{background:linear-gradient(145deg,#1a5c28 0%,#0f3318 50%,#091e0d 100%);border-radius:28px;padding:72px 60px;text-align:center;color:#fff;position:relative;overflow:hidden;border:1px solid rgba(114,198,138,.12);box-shadow:0 32px 80px rgba(0,0,0,.22),0 0 80px rgba(27,94,42,.12)}
+.closing::before{content:'';position:absolute;top:-140px;left:50%;transform:translateX(-50%);width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(255,255,255,.04) 0%,transparent 70%);animation:orb-breathe 8s ease-in-out infinite}
+.closing::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(255,255,255,.005) 2px,rgba(255,255,255,.005) 4px);pointer-events:none}
+.closing h2{font-family:'Fraunces',serif;font-size:clamp(32px,5vw,58px);font-weight:900;line-height:1.08;margin-bottom:24px;position:relative;z-index:1;letter-spacing:-.02em}
+.closing h2 em{color:var(--g3);font-style:italic}
+.closing p{font-size:16px;color:rgba(255,255,255,.62);max-width:580px;margin:0 auto;line-height:1.95;position:relative;z-index:1}
+
+/* ANIMATIONS */
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  .engines-grid{grid-template-columns:1fr}
+  .engines-grid::after{display:none}
+  .engine-card{min-height:auto;padding:36px 28px 32px}
+  .amb-stage{grid-template-columns:1fr;padding:48px 32px 40px}
+  .avatar-frame{width:200px;height:240px}
+  .avatar-circle{width:140px;height:140px;font-size:60px}
+  .ring1{width:220px;height:220px}.ring2{width:170px;height:170px}
+  .story-grid,.pillars,.rgrid{grid-template-columns:1fr 1fr}
+  .phase{grid-template-columns:1fr}
+  .phase-lbl{text-align:left;padding-top:0}
+  .pbody{border-left:none;padding-left:0}
+  .pbody::before{display:none}
+  .dels{grid-template-columns:1fr}
+  .hero{padding:40px 24px}
+  .wrap{padding:60px 20px}
+  .amb-stage{padding:40px 24px}
+  .story-strip{padding:32px 24px}
+  body{cursor:auto}
+  #cursor,#cursor-trail,#nav-dots{display:none}
+}
+/* PRICING SECTION */
+.pricing-section{margin-bottom:80px}
+.pricing-outer{border-radius:32px;overflow:hidden;border:1px solid rgba(255,255,255,.07);box-shadow:0 32px 80px rgba(0,0,0,.22),0 8px 24px rgba(0,0,0,.12)}
+.pricing-hero{background:linear-gradient(145deg,#0a0a14 0%,#1a0f2e 60%,#060611 100%);padding:60px 56px 48px;position:relative;overflow:hidden;text-align:center}
+.pricing-hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 60% 80% at 50% 0%,rgba(74,29,150,.2) 0%,transparent 70%),radial-gradient(ellipse 40% 50% at 80% 100%,rgba(200,90,20,.08) 0%,transparent 60%)}
+.pricing-hero::after{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.015) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.015) 1px,transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 70% 70% at center,black 30%,transparent 100%)}
+.pricing-hero h2{font-family:'Fraunces',serif;font-size:clamp(32px,4.5vw,58px);font-weight:900;line-height:1.05;color:#fff;margin-bottom:16px;position:relative;z-index:1;letter-spacing:-.02em}
+.pricing-hero h2 em{color:var(--pl);font-style:italic}
+.pricing-hero p{font-size:16px;color:rgba(255,255,255,.48);max-width:620px;margin:0 auto 0;line-height:1.9;position:relative;z-index:1}
+.pricing-body{background:rgba(255,255,255,.02);padding:52px 56px}
+.comparison-grid{display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-bottom:48px}
+.comp-card{border-radius:20px;padding:36px 32px;position:relative;overflow:hidden;transition:transform .4s var(--ease),box-shadow .4s ease;cursor:none}
+.comp-card.traditional{background:linear-gradient(145deg,rgba(200,90,20,.15) 0%,rgba(200,90,20,.05) 100%);border:1px solid rgba(200,90,20,.25)}
+.comp-card.ai{background:linear-gradient(145deg,rgba(74,29,150,.2) 0%,rgba(74,29,150,.08) 100%);border:1px solid rgba(196,181,253,.25)}
+.comp-card:hover{transform:translateY(-6px) scale(1.015);box-shadow:0 24px 60px rgba(0,0,0,.28)}
+.comp-tag{display:inline-flex;align-items:center;gap:8px;font-size:10px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;padding:5px 14px;border-radius:50px;margin-bottom:20px}
+.comp-card.traditional .comp-tag{background:rgba(200,90,20,.2);color:#FBD0AC;border:1px solid rgba(200,90,20,.3)}
+.comp-card.ai .comp-tag{background:rgba(196,181,253,.15);color:var(--pl);border:1px solid rgba(196,181,253,.3)}
+.comp-card h3{font-family:'Fraunces',serif;font-size:26px;font-weight:700;color:#fff;margin-bottom:20px;line-height:1.1;letter-spacing:-.01em}
+.cost-items{list-style:none;display:flex;flex-direction:column;gap:12px;margin-bottom:24px}
+.cost-items li{display:flex;align-items:flex-start;gap:10px;font-size:13px;color:rgba(255,255,255,.7);line-height:1.6;padding:10px 14px;border-radius:10px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.05)}
+.cost-label{font-weight:600;color:rgba(255,255,255,.85)}
+.cost-value{margin-left:auto;font-weight:700;white-space:nowrap}
+.comp-card.traditional .cost-value{color:#FBD0AC}
+.comp-card.ai .cost-value{color:var(--pl)}
+.total-box{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);border-radius:12px;padding:16px 18px;text-align:center}
+.total-label{font-size:11px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:6px}
+.total-amount{font-family:'Fraunces',serif;font-size:38px;font-weight:900;line-height:1;letter-spacing:-.02em}
+.comp-card.traditional .total-amount{color:#ff9057}
+.comp-card.ai .total-amount{color:var(--pl)}
+.savings-banner{background:linear-gradient(135deg,rgba(27,94,42,.25) 0%,rgba(27,94,42,.12) 100%);border:1px solid rgba(114,198,138,.25);border-radius:18px;padding:32px 40px;text-align:center;position:relative;overflow:hidden}
+.savings-banner::before{content:'';position:absolute;top:-60px;right:-60px;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(114,198,138,.1) 0%,transparent 70%)}
+.savings-banner h4{font-family:'Fraunces',serif;font-size:20px;font-weight:700;color:var(--g3);margin-bottom:10px;position:relative;z-index:1}
+.savings-banner p{font-size:15px;color:rgba(255,255,255,.65);line-height:1.75;position:relative;z-index:1}
+.savings-banner strong{color:#fff;font-size:32px;display:inline-block;margin:0 6px}
+.offer-card{background:linear-gradient(145deg,#1a5c28 0%,#0f3318 60%,#091e0d 100%);border-radius:20px;padding:40px 44px;border:1px solid rgba(114,198,138,.2);box-shadow:0 20px 60px rgba(0,0,0,.25),0 0 60px rgba(27,94,42,.1);position:relative;overflow:hidden}
+.offer-card::before{content:'';position:absolute;top:-80px;left:-80px;width:300px;height:300px;border-radius:50%;background:radial-gradient(circle,rgba(114,198,138,.08) 0%,transparent 70%);animation:orb-breathe 8s ease-in-out infinite}
+.offer-tag{display:inline-flex;align-items:center;gap:8px;background:rgba(114,198,138,.15);border:1px solid rgba(114,198,138,.3);border-radius:50px;padding:6px 16px;margin-bottom:20px;position:relative;z-index:1}
+.offer-tag span{font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--g3)}
+.offer-card h3{font-family:'Fraunces',serif;font-size:32px;font-weight:900;color:#fff;margin-bottom:16px;line-height:1.05;position:relative;z-index:1;letter-spacing:-.02em}
+.offer-breakdown{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:28px;position:relative;z-index:1}
+.offer-item{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:20px 22px;transition:background .3s ease,border-color .3s ease,transform .3s var(--ease)}
+.offer-item:hover{background:rgba(114,198,138,.05);border-color:rgba(114,198,138,.15);transform:translateY(-3px)}
+.offer-item-label{font-size:12px;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.45);margin-bottom:8px}
+.offer-item-value{font-family:'Fraunces',serif;font-size:36px;font-weight:900;color:var(--g3);line-height:1;letter-spacing:-.02em}
+.offer-total{background:rgba(114,198,138,.12);border:2px solid rgba(114,198,138,.3);border-radius:16px;padding:24px 28px;text-align:center;position:relative;z-index:1}
+.offer-total-label{font-size:12px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.5);margin-bottom:8px}
+.offer-total-value{font-family:'Fraunces',serif;font-size:52px;font-weight:900;color:#fff;line-height:1;letter-spacing:-.03em;text-shadow:0 0 20px rgba(114,198,138,.3)}
+.offer-total-sub{font-size:13px;color:rgba(255,255,255,.6);margin-top:8px}
+
+</style>
+</head>
+<body>
+
+<div id="cursor"></div>
+<div id="cursor-trail"></div>
+<div id="scroll-progress"></div>
+
+<nav id="nav-dots">
+  <div class="nav-dot active" data-label="Intro" data-target="0"></div>
+  <div class="nav-dot" data-label="Mission" data-target="1"></div>
+  <div class="nav-dot" data-label="Engines" data-target="2"></div>
+  <div class="nav-dot" data-label="Ambassador" data-target="3"></div>
+  <div class="nav-dot" data-label="Roadmap" data-target="4"></div>
+  <div class="nav-dot" data-label="Results" data-target="5"></div>
+  <div class="nav-dot" data-label="Investment" data-target="6"></div>
+</nav>
+
+<!-- CINEMATIC INTRO — UNCHANGED -->
+<div id="cinematic">
+  <div class="cin-line" id="l1">Every year, <em>80 million tons</em> of food<br>are wasted in America.</div>
+  <div class="cin-line" id="l2" style="font-size:clamp(18px,3vw,36px);opacity:0;color:rgba(255,255,255,.5);margin-top:16px">While 44 million people go hungry.</div>
+  <div class="cin-line" id="l3" style="margin-top:48px">You decided to <em>do something about it.</em></div>
+  <div class="cin-line" id="l4" style="font-size:clamp(16px,2.5vw,26px);opacity:0;color:rgba(255,255,255,.45);margin-top:12px">Now let's build the machine that takes you to #1.</div>
+  <button class="cin-skip" onclick="skipIntro()">Skip ↓</button>
+</div>
+
+<!-- HERO — UNCHANGED CONTENT -->
+<section class="hero scene" data-section="0">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-sweep"></div>
+  <div class="hero-particles" id="heroParticles"></div>
+  <div class="hero-eyebrow">Confidential · Partnership Roadmap · 2025–2026</div>
+  <h1>From Warehouse<br>to <em>#1 Foodbank</em><br>in America.</h1>
+  <p class="hero-sub">A 12-month transformation — automation, digital sales, and AI-powered community working as one unstoppable engine.</p>
+  <div class="pills">
+    <span class="pill">🏭 Warehouse Automation</span>
+    <span class="pill">🛒 Omnichannel Sales</span>
+    <span class="pill">🤖 AI Ambassadors</span>
+    <span class="pill">💚 Zero Waste Mission</span>
+    <span class="pill">📊 Real-Time Reporting</span>
+  </div>
+  <div class="scroll-cue">
+    <span>Explore</span>
+    <div class="scroll-line-v"></div>
+  </div>
+</section>
+
+<div class="s-divider"></div>
+
+<!-- CONTENT — UNCHANGED -->
+<div class="wrap" data-section="1">
+
+  <!-- MISSION — UNCHANGED -->
+  <div class="mission-wrap reveal scene">
+    <div class="mission-card">
+      <p>Every American family that benefits from a rescued meal is a direct result of how efficiently this organization moves, sells, and communicates. <strong>A mission this powerful deserves infrastructure that matches it.</strong> We're here to build that engine — so it runs automatically, and your team stays focused entirely on what matters: zero waste, maximum impact.</p>
+    </div>
+  </div>
+
+  <!-- TWO ENGINES — UNCHANGED CONTENT -->
+  <div class="engines-section scene reveal" data-section="2">
+    <div class="eyebrow">What We Build</div>
+    <div class="heading">Two engines. One unified system.</div>
+    <p class="body-txt">Everything over 12 months feeds into two macro-areas that amplify each other — operations that free your team, and community that grows your mission.</p>
+
+    <div class="engines-grid">
+      <div class="engine-card ops">
+        <div class="card-shimmer"></div>
+        <div class="eng-icon">⚙️</div>
+        <div class="eng-eyebrow">Engine 01</div>
+        <h3>Sales &amp; Operations<br>Engine</h3>
+        <p class="eng-sub">The invisible backbone — running warehouse, distribution, and online sales without constant human input.</p>
+        <ul class="eng-items">
+          <li><span class="eng-arr">→</span>Warehouse automation: pick, pack &amp; distribute faster</li>
+          <li><span class="eng-arr">→</span>Online sales channels live 24/7, always in stock</li>
+          <li><span class="eng-arr">→</span>Order fulfillment with minimal manual touchpoints</li>
+          <li><span class="eng-arr">→</span>Real-time inventory &amp; distribution dashboard</li>
+        </ul>
+        <div class="eng-wm">⚙</div>
+      </div>
+      <div class="engine-card comm">
+        <div class="card-shimmer"></div>
+        <div class="eng-icon">🌿</div>
+        <div class="eng-eyebrow">Engine 02</div>
+        <h3>Community &amp; Growth<br>Machine</h3>
+        <p class="eng-sub">The face of your mission — an AI Ambassador and automated community engine that never sleeps.</p>
+        <ul class="eng-items">
+          <li><span class="eng-arr">→</span>AI Ambassador posting &amp; engaging daily across platforms</li>
+          <li><span class="eng-arr">→</span>Every lead, follower &amp; donor replied to — automatically</li>
+          <li><span class="eng-arr">→</span>Stories of rescued food and families helped, at scale</li>
+          <li><span class="eng-arr">→</span>Donor retention and partner outreach on autopilot</li>
+        </ul>
+        <div class="eng-wm">🌿</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PILLARS — UNCHANGED -->
+  <div class="reveal scene">
+    <div class="eyebrow">What We're Building Together</div>
+    <div class="heading">4 Pillars of Transformation</div>
+    <p class="body-txt">Four interconnected systems that operate as one unified engine — designed to run without constant human input.</p>
+  </div>
+  <div class="pillars reveal scene">
+    <div class="pillar"><div class="p-ico">🏭</div><h3>Operations Automation</h3><p>Warehouse management, pick &amp; pack, inventory tracking, and distribution — streamlined to eliminate bottlenecks and errors.</p></div>
+    <div class="pillar"><div class="p-ico">🛒</div><h3>Omnichannel Sales</h3><p>Automated listing, order management, and fulfillment across online platforms — 24/7, without manual input.</p></div>
+    <div class="pillar"><div class="p-ico">🤖</div><h3>AI Ambassadors</h3><p>Mission-driven digital personas engaging your audience authentically at scale — anti-waste, pro-community, always on.</p></div>
+    <div class="pillar"><div class="p-ico">💬</div><h3>Community &amp; Leads</h3><p>AI-powered responses to every lead, follower, donor, and partner — no conversation goes cold, ever.</p></div>
+    <div class="pillar"><div class="p-ico">📊</div><h3>Data &amp; Reporting</h3><p>Real-time dashboards across sales, operations, and community growth — always on, always accurate.</p></div>
+    <div class="pillar"><div class="p-ico">🌍</div><h3>Brand &amp; Story</h3><p>Consistent content telling the story of food rescue and real families helped — across every channel, automatically.</p></div>
+  </div>
+
+</div>
+
+<div class="s-divider"></div>
+
+<!-- AI AMBASSADOR — UNCHANGED -->
+<div style="max-width:1040px;margin:0 auto;padding:0 40px 80px" data-section="3">
+<div class="amb-outer reveal scene">
+
+  <div class="amb-stage">
+    <div class="amb-text">
+      <div class="amb-tag">
+        <div class="live-dot"></div>
+        <span>AI Ambassador · Always On</span>
+      </div>
+      <h2>Meet the voice<br>of your <em>mission.</em></h2>
+      <p>This is what your community experiences — a real-feeling digital persona who wakes up every morning believing in what you believe. She posts, she responds, she tells your story. She never burns out.</p>
+      <ul class="amb-traits">
+        <li><span class="trait-ck">✓</span><span><strong style="color:#fff">Built on your values</strong> — anti-waste, pro-community, proud to be different. Every post, every reply, every story.</span></li>
+        <li><span class="trait-ck">✓</span><span><strong style="color:#fff">Sounds genuinely human</strong> — not a bot, not a brand account. A person your followers want to follow back.</span></li>
+        <li><span class="trait-ck">✓</span><span><strong style="color:#fff">Always available</strong> — midnight DM, Sunday comment, partnership inquiry at 6am. Every message gets a response.</span></li>
+        <li><span class="trait-ck">✓</span><span><strong style="color:#fff">Grows your community</strong> — attracting not just followers, but believers. People who share, donate, and come back.</span></li>
+      </ul>
+    </div>
+
+    <div class="avatar-card">
+      <div class="avatar-frame">
+        <div class="glow-ring ring3"></div>
+        <div class="glow-ring ring1"></div>
+        <div class="glow-ring ring2"></div>
+        <div class="avatar-circle" id="avatarCircle">🌿</div>
+        <div class="av-status">
+          <div class="live-dot"></div>
+          <span>Maya · Active now</span>
+        </div>
+        <div class="speech-bubble">
+          <div class="bubble-name">Maya · @maya.nofoodwaste</div>
+          <div class="bubble-text" id="bubbleText"><span class="cursor"></span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="story-strip">
+    <div style="margin-bottom:28px">
+      <div class="eyebrow">What Maya Posts — Every Day</div>
+      <div class="heading" style="font-size:26px">Real stories. Real impact. At scale.</div>
+    </div>
+    <div class="story-grid">
+      <div class="story-card s1">
+        <div class="story-date">Today · Instagram</div>
+        <h4>"This loaf of bread almost ended up in a landfill. Today it's on a family's table."</h4>
+        <p>Sharing the moment a rescued batch of bakery goods made it to three families in Ohio. This is why we do this.</p>
+        <div class="story-stats"><span class="stat-pill">❤️ 4.2k likes</span><span class="stat-pill">💬 318 comments</span></div>
+      </div>
+      <div class="story-card s2">
+        <div class="story-date">Yesterday · TikTok</div>
+        <h4>"POV: you just saved 200 lbs of produce from being thrown away"</h4>
+        <p>Behind-the-scenes warehouse reel showing the rescue process — raw, real, and shareable.</p>
+        <div class="story-stats"><span class="stat-pill">▶️ 128k views</span><span class="stat-pill">🔁 9.4k shares</span></div>
+      </div>
+      <div class="story-card s3">
+        <div class="story-date">2 days ago · X / Threads</div>
+        <h4>"America wastes 40% of its food. We're making that number smaller. Join us."</h4>
+        <p>Mission statement turned into a rallying cry — driving traffic to the online store and donations page.</p>
+        <div class="story-stats"><span class="stat-pill">🔁 2.1k reposts</span><span class="stat-pill">🛒 +340 orders</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="s-divider"></div>
+
+<div class="wrap" style="padding-top:40px" data-section="4">
+
+  <!-- TIMELINE — UNCHANGED -->
+  <div class="reveal scene">
+    <div class="eyebrow">The Plan</div>
+    <div class="heading">12-Month Roadmap</div>
+    <p class="body-txt">Four deliberate phases — each one building on the last. Steady, compounding progress with milestones you can see and measure.</p>
+  </div>
+
+  <div class="tl-wrap">
+    <div class="phase reveal scene">
+      <div class="phase-lbl"><span class="badge b1">Phase 1</span><br><span class="pmo">Months 1–3<br><strong style="font-size:10px;color:rgba(255,255,255,.5)">Foundation</strong></span></div>
+      <div class="pbody c1">
+        <div class="ptitle">Build the Engine</div>
+        <div class="ptag">"Before we accelerate, we make sure everything holds."</div>
+        <div class="dels">
+          <div class="del"><div class="di">🔍</div><div class="dt"><strong>Full Operations Audit</strong><span>Warehouse flow, pain points, and the manual processes costing the most time.</span></div></div>
+          <div class="del"><div class="di">🗺️</div><div class="dt"><strong>Digital Infrastructure</strong><span>Inventory, channels, CRM, and comms — unified into one controllable system.</span></div></div>
+          <div class="del"><div class="di">📦</div><div class="dt"><strong>Warehouse Process Design</strong><span>Pick &amp; pack and distribution redesigned for automation-readiness.</span></div></div>
+          <div class="del"><div class="di">🏪</div><div class="dt"><strong>Online Sales Activation</strong><span>First products live with optimized listings and automated pricing logic.</span></div></div>
+        </div>
+        <div class="outcome oc1"><span style="font-size:16px">🎯</span><p><strong>End of Phase 1:</strong> Clean digital backbone in place. First online sales running. Foundation set for full automation.</p></div>
+      </div>
+    </div>
+    <div class="phase reveal scene">
+      <div class="phase-lbl"><span class="badge b2">Phase 2</span><br><span class="pmo">Months 4–6<br><strong style="font-size:10px;color:rgba(255,255,255,.5)">Automation</strong></span></div>
+      <div class="pbody c2">
+        <div class="ptitle">Automate the Core</div>
+        <div class="ptag">"The work starts happening without anyone having to start it."</div>
+        <div class="dels">
+          <div class="del"><div class="di">⚙️</div><div class="dt"><strong>Warehouse Automation</strong><span>Automated alerts, receiving workflows, and pick-list generation — fewer errors, faster flow.</span></div></div>
+          <div class="del"><div class="di">🔄</div><div class="dt"><strong>Order &amp; Fulfillment</strong><span>From purchase to shipment — processed and tracked with minimal human touchpoints.</span></div></div>
+          <div class="del"><div class="di">💬</div><div class="dt"><strong>Lead Response Automation</strong><span>Instant AI replies to inquiries, donations, and partnership requests — around the clock.</span></div></div>
+          <div class="del"><div class="di">📣</div><div class="dt"><strong>Social Automation</strong><span>Scheduled content pipelines — consistent presence without manual posting.</span></div></div>
+        </div>
+        <div class="outcome oc2"><span style="font-size:16px">🎯</span><p><strong>End of Phase 2:</strong> Operations running faster with less effort. Online sales growing. Team bandwidth freed for what matters.</p></div>
+      </div>
+    </div>
+    <div class="phase reveal scene">
+      <div class="phase-lbl"><span class="badge b3">Phase 3</span><br><span class="pmo">Months 7–9<br><strong style="font-size:10px;color:rgba(255,255,255,.5)">Amplification</strong></span></div>
+      <div class="pbody c3">
+        <div class="ptitle">Amplify the Mission</div>
+        <div class="ptag">"The story starts spreading on its own — authentically and at scale."</div>
+        <div class="dels">
+          <div class="del"><div class="di">🌟</div><div class="dt"><strong>AI Ambassador Launch</strong><span>Maya goes live — storytelling around anti-waste, food rescue, and real family impact.</span></div></div>
+          <div class="del"><div class="di">📊</div><div class="dt"><strong>Sales Channel Expansion</strong><span>New channels opened based on performance, with automated sync and pricing.</span></div></div>
+          <div class="del"><div class="di">🤝</div><div class="dt"><strong>Community Growth System</strong><span>Follower nurturing, donor retention, and partner outreach — fully automated.</span></div></div>
+          <div class="del"><div class="di">📈</div><div class="dt"><strong>Performance Dashboard</strong><span>Real-time visibility into every metric that matters, in one unified view.</span></div></div>
+        </div>
+        <div class="outcome oc3"><span style="font-size:16px">🎯</span><p><strong>End of Phase 3:</strong> Brand gaining organic momentum. AI Ambassador generating real engagement. Operating like a scaled business.</p></div>
+      </div>
+    </div>
+    <div class="phase reveal scene">
+      <div class="phase-lbl"><span class="badge b4">Phase 4</span><br><span class="pmo">Months 10–12<br><strong style="font-size:10px;color:rgba(255,255,255,.5)">Leadership</strong></span></div>
+      <div class="pbody c4">
+        <div class="ptitle">Claim the #1 Position</div>
+        <div class="ptag">"From foodbank to category leader — without losing what makes you different."</div>
+        <div class="dels">
+          <div class="del"><div class="di">🏆</div><div class="dt"><strong>Full System Optimization</strong><span>Every automated system refined on 9 months of real data and results.</span></div></div>
+          <div class="del"><div class="di">🚀</div><div class="dt"><strong>Scale &amp; Replicate</strong><span>Proven playbooks ready to extend across new locations or product categories.</span></div></div>
+          <div class="del"><div class="di">🌍</div><div class="dt"><strong>Impact Reporting System</strong><span>Automated impact reports, social proof, and community storytelling.</span></div></div>
+          <div class="del"><div class="di">🗓️</div><div class="dt"><strong>Year 2 Strategic Plan</strong><span>A data-driven roadmap for the next phase — delivered at month 12.</span></div></div>
+        </div>
+        <div class="outcome oc4"><span style="font-size:16px">🎯</span><p><strong>End of Month 12:</strong> Fully automated, digitally active, community-driven — with the infrastructure to lead the foodbank space nationally.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESULTS — UNCHANGED -->
+  <div class="results reveal scene" data-section="5">
+    <div class="eyebrow">What You Get</div>
+    <div class="heading">Results You Can See</div>
+    <p class="body-txt">Not promises — the logical result of the systems we put in place, measured and visible in real time.</p>
+    <div class="rgrid">
+      <div class="rc"><div class="ico">⚡</div><h3>+30% Throughput, Same Team.</h3><p>Automation doubles your operational capacity without doubling your payroll.</p></div>
+      <div class="rc"><div class="ico">💸</div><h3>Projected +40% Donor LTV.</h3><p>AI-nurtured relationships lead to higher retention and lifetime donor value.</p></div>
+      <div class="rc"><div class="ico">🌱</div><h3>Acquisition Cost −60%.</h3><p>Your AI Ambassador engages and converts followers at a fraction of traditional ad spend.</p></div>
+      <div class="rc"><div class="ico">📣</div><h3>Brand Dominance at Scale.</h3><p>Consistent mission-driven presence across every channel, every day — without a full marketing team.</p></div>
+    </div>
+  </div>
+
+
+
+  <!-- PRICING — THE PARTNERSHIP MODEL -->
+  <div class="pricing-section reveal scene" data-section="6">
+    <div class="pricing-outer">
+
+      <div class="pricing-hero">
+        <h2>The Partnership Model – <em>We Only Win When You Win</em></h2>
+        <p>You're not buying a service. You're funding the operating system for a national feeding network.<br>
+        <span style="font-size:14px;color:rgba(255,255,255,.35)">Mission 360™ – The Infrastructure That Builds Itself</span></p>
+      </div>
+
+      <div class="pricing-body" style="padding-top:40px">
+
+        <!-- ═══════════════════════════════════════════════════════
+             SEZIONE 1 — CONFRONTO: OGGI VS. CON MISSION 360™
+             ═══════════════════════════════════════════════════════ -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:32px;margin-bottom:48px">
+
+          <!-- ── SINISTRA: IL COSTO REALE DI FARE LE COSE A MANO ── -->
+          <div style="background:linear-gradient(145deg,rgba(200,60,20,.18) 0%,rgba(200,60,20,.06) 100%);border:1px solid rgba(200,90,20,.3);border-radius:24px;padding:36px 32px">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px">
+              <span style="background:rgba(200,90,20,.2);color:#FBD0AC;border:1px solid rgba(200,90,20,.3);border-radius:50px;padding:6px 16px;font-size:10px;font-weight:700;letter-spacing:2px">👥 TO DO THIS MANUALLY, YOU'D NEED</span>
+            </div>
+            <h3 style="font-family:'Fraunces',serif;font-size:26px;color:#fff;margin-bottom:6px;line-height:1.2">The Human Team That Replaces<br>What We Automate</h3>
+            <p style="font-size:12px;color:rgba(255,255,255,.45);margin-bottom:24px">10 dedicated roles. Estimated annual cost to run these operations at scale—manually.</p>
+
+            <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:28px">
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:11px 16px;background:rgba(255,255,255,.03);border-radius:12px;border-left:3px solid rgba(200,90,20,.4)">
+                <div>
+                  <div style="font-size:13px;color:rgba(255,255,255,.8);font-weight:600">Sales & Partner Acquisition (2 FTE)</div>
+                  <div style="font-size:11px;color:rgba(255,255,255,.4);margin-top:2px">Outbound, food bank onboarding, CRM mgmt</div>
+                </div>
+                <span style="font-weight:800;color:#FBD0AC;font-size:15px;white-space:nowrap">$160K/yr</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:11px 16px;background:rgba(255,255,255,.03);border-radius:12px;border-left:3px solid rgba(200,90,20,.4)">
+                <div>
+                  <div style="font-size:13px;color:rgba(255,255,255,.8);font-weight:600">Logistics & Ops Coordinators (2 FTE)</div>
+                  <div style="font-size:11px;color:rgba(255,255,255,.4);margin-top:2px">Order routing, warehouse sync, fulfillment</div>
+                </div>
+                <span style="font-weight:800;color:#FBD0AC;font-size:15px;white-space:nowrap">$140K/yr</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:11px 16px;background:rgba(255,255,255,.03);border-radius:12px;border-left:3px solid rgba(200,90,20,.4)">
+                <div>
+                  <div style="font-size:13px;color:rgba(255,255,255,.8);font-weight:600">Corporate Partnerships Manager (1 FTE)</div>
+                  <div style="font-size:11px;color:rgba(255,255,255,.4);margin-top:2px">Sponsor prospecting, proposals, reporting</div>
+                </div>
+                <span style="font-weight:800;color:#FBD0AC;font-size:15px;white-space:nowrap">$120K/yr</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:11px 16px;background:rgba(255,255,255,.03);border-radius:12px;border-left:3px solid rgba(200,90,20,.4)">
+                <div>
+                  <div style="font-size:13px;color:rgba(255,255,255,.8);font-weight:600">Marketing & Content (2 FTE)</div>
+                  <div style="font-size:11px;color:rgba(255,255,255,.4);margin-top:2px">Campaigns, email, social, impact reporting</div>
+                </div>
+                <span style="font-weight:800;color:#FBD0AC;font-size:15px;white-space:nowrap">$150K/yr</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:11px 16px;background:rgba(255,255,255,.03);border-radius:12px;border-left:3px solid rgba(200,90,20,.4)">
+                <div>
+                  <div style="font-size:13px;color:rgba(255,255,255,.8);font-weight:600">Data & Reporting Analysts (2 FTE)</div>
+                  <div style="font-size:11px;color:rgba(255,255,255,.4);margin-top:2px">KPIs, donor reports, impact dashboards</div>
+                </div>
+                <span style="font-weight:800;color:#FBD0AC;font-size:15px;white-space:nowrap">$160K/yr</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:11px 16px;background:rgba(255,255,255,.03);border-radius:12px;border-left:3px solid rgba(200,90,20,.4)">
+                <div>
+                  <div style="font-size:13px;color:rgba(255,255,255,.8);font-weight:600">Tech & Tools Stack</div>
+                  <div style="font-size:11px;color:rgba(255,255,255,.4);margin-top:2px">CRM, ERP, WMS, email platforms, integrations</div>
+                </div>
+                <span style="font-weight:800;color:#FBD0AC;font-size:15px;white-space:nowrap">$110K/yr</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:11px 16px;background:rgba(255,255,255,.03);border-radius:12px;border-left:3px solid rgba(200,90,20,.4)">
+                <div>
+                  <div style="font-size:13px;color:rgba(255,255,255,.8);font-weight:600">Benefits, HR overhead & recruitment</div>
+                  <div style="font-size:11px;color:rgba(255,255,255,.4);margin-top:2px">~30% burden on 10 headcount</div>
+                </div>
+                <span style="font-weight:800;color:#FBD0AC;font-size:15px;white-space:nowrap">$234K/yr</span>
+              </div>
+            </div>
+
+            <div style="background:rgba(200,60,20,.18);border:1px solid rgba(200,90,20,.35);border-radius:16px;padding:22px;text-align:center">
+              <div style="font-size:10px;color:rgba(255,255,255,.45);letter-spacing:2px;margin-bottom:6px">ESTIMATED ANNUAL COST TO REPLICATE THIS MANUALLY</div>
+              <div style="font-family:'Fraunces',serif;font-size:52px;font-weight:900;color:#ff8040;line-height:1">$1.3M</div>
+              <p style="font-size:11px;color:rgba(255,255,255,.35);margin-top:8px">Per year. Every year. And still capped at human throughput.</p>
+            </div>
+          </div>
+
+          <!-- ── DESTRA: COSA PORTA MISSION 360™ A LUI ── -->
+          <div style="background:linear-gradient(145deg,rgba(74,29,150,.22) 0%,rgba(74,29,150,.08) 100%);border:1px solid rgba(196,181,253,.28);border-radius:24px;padding:36px 32px;position:relative;overflow:hidden">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:24px">
+              <span style="background:rgba(196,181,253,.15);color:var(--pl);border:1px solid rgba(196,181,253,.3);border-radius:50px;padding:6px 16px;font-size:10px;font-weight:700;letter-spacing:2px">⚙️ MISSION 360™ — WHAT IT UNLOCKS FOR YOU</span>
+            </div>
+            <h3 style="font-family:'Fraunces',serif;font-size:26px;color:#fff;margin-bottom:10px;line-height:1.2">An AI Engine That Works 24/7—<br>So You Don't Have To Hire</h3>
+            <p style="font-size:13px;color:rgba(255,255,255,.55);margin-bottom:28px;line-height:1.6">
+              Every metric below is what the system drives for <strong style="color:#fff">Shredding Hunger</strong>—without adding headcount, without manual follow-up, without limits on geography or volume.
+            </p>
+
+            <!-- BENEFICI IN % PER LUI -->
+            <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:28px">
+
+              <div style="background:rgba(196,181,253,.07);border:1px solid rgba(196,181,253,.15);border-radius:14px;padding:14px 18px">
+                <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:6px">
+                  <span style="font-family:'Fraunces',serif;font-size:28px;font-weight:900;color:var(--pl);line-height:1;white-space:nowrap">+3x</span>
+                  <span style="font-size:9px;color:rgba(196,181,253,.5);letter-spacing:1.5px;font-weight:700">PARTNERS</span>
+                </div>
+                <div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:3px">Food Bank Partner Network</div>
+                <div style="font-size:11px;color:rgba(255,255,255,.5);line-height:1.5">Automated outreach, onboarding & relationship management—scale from 100 to 300+ partners with zero extra staff</div>
+              </div>
+
+              <div style="background:rgba(196,181,253,.07);border:1px solid rgba(196,181,253,.15);border-radius:14px;padding:14px 18px">
+                <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:6px">
+                  <span style="font-family:'Fraunces',serif;font-size:28px;font-weight:900;color:var(--pl);line-height:1;white-space:nowrap">+65%</span>
+                  <span style="font-size:9px;color:rgba(196,181,253,.5);letter-spacing:1.5px;font-weight:700">B2B REVENUE</span>
+                </div>
+                <div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:3px">Order Volume & Processed Value</div>
+                <div style="font-size:11px;color:rgba(255,255,255,.5);line-height:1.5">AI-driven reorder triggers, demand forecasting & automated fulfillment pipelines increase processed order value</div>
+              </div>
+
+              <div style="background:rgba(196,181,253,.07);border:1px solid rgba(196,181,253,.15);border-radius:14px;padding:14px 18px">
+                <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:6px">
+                  <span style="font-family:'Fraunces',serif;font-size:28px;font-weight:900;color:var(--pl);line-height:1;white-space:nowrap">+40%</span>
+                  <span style="font-size:9px;color:rgba(196,181,253,.5);letter-spacing:1.5px;font-weight:700">CORPORATE FUNDING</span>
+                </div>
+                <div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:3px">Sponsorships & In-Kind Donations</div>
+                <div style="font-size:11px;color:rgba(255,255,255,.5);line-height:1.5">Automated sponsor pipeline, impact decks & ROI reporting convert cold outreach into multi-year commitments</div>
+              </div>
+
+              <div style="background:rgba(196,181,253,.07);border:1px solid rgba(196,181,253,.15);border-radius:14px;padding:14px 18px">
+                <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:6px">
+                  <span style="font-family:'Fraunces',serif;font-size:28px;font-weight:900;color:var(--pl);line-height:1;white-space:nowrap">−35%</span>
+                  <span style="font-size:9px;color:rgba(196,181,253,.5);letter-spacing:1.5px;font-weight:700">LOGISTICS COST</span>
+                </div>
+                <div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:3px">Fulfillment & Distribution Spend</div>
+                <div style="font-size:11px;color:rgba(255,255,255,.5);line-height:1.5">Route optimization, consolidated shipments & predictive inventory cut waste and carrier spend significantly</div>
+              </div>
+
+              <div style="background:rgba(196,181,253,.07);border:1px solid rgba(196,181,253,.15);border-radius:14px;padding:14px 18px">
+                <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:6px">
+                  <span style="font-family:'Fraunces',serif;font-size:28px;font-weight:900;color:var(--pl);line-height:1;white-space:nowrap">10x</span>
+                  <span style="font-size:9px;color:rgba(196,181,253,.5);letter-spacing:1.5px;font-weight:700">OPERATIONAL CAPACITY</span>
+                </div>
+                <div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:3px">Throughput Without Headcount Growth</div>
+                <div style="font-size:11px;color:rgba(255,255,255,.5);line-height:1.5">Same team manages 10x the volume—orders, partners, campaigns, reports—all running in parallel, automatically</div>
+              </div>
+
+            </div>
+
+            <!-- MOAT -->
+            <div style="background:rgba(114,198,138,.08);border:1px solid rgba(114,198,138,.2);border-radius:12px;padding:16px">
+              <div style="font-size:10px;font-weight:700;color:var(--g3);letter-spacing:1.5px;margin-bottom:4px">💎 PERMANENT COMPETITIVE ADVANTAGE</div>
+              <div style="font-size:11px;color:rgba(255,255,255,.7)">While other feeding programs keep hiring, your infrastructure compounds. You become the default operating system for food banks nationwide—and no one can catch up.</div>
+            </div>
+          </div>
+        </div>
+
+
+        <!-- ═══════════════════════════════════════════════════════
+             SEZIONE 2 — PROIEZIONI: QUANTO GUADAGNA LUI
+             ═══════════════════════════════════════════════════════ -->
+        <div style="background:linear-gradient(135deg,rgba(27,94,42,.22) 0%,rgba(10,40,18,.15) 100%);border:1px solid rgba(114,198,138,.28);border-radius:24px;padding:44px;margin-bottom:48px">
+
+          <div style="text-align:center;margin-bottom:36px">
+            <span style="background:rgba(114,198,138,.15);color:var(--g3);border-radius:50px;padding:6px 20px;font-size:10px;font-weight:700;letter-spacing:2px">📈 WHAT SHREDDING HUNGER GAINS — YEAR 1 → YEAR 2</span>
+            <h3 style="font-family:'Fraunces',serif;font-size:36px;color:#fff;margin:16px 0 8px;line-height:1.2">The Numbers That Change<br>Everything for Your Mission</h3>
+            <p style="font-size:14px;color:rgba(255,255,255,.5);max-width:560px;margin:0 auto">Conservative projections based on Feeding America network benchmarks and nonprofit logistics studies.</p>
+          </div>
+
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-bottom:36px">
+
+            <div style="background:rgba(0,0,0,.25);border:1px solid rgba(114,198,138,.2);border-radius:18px;padding:28px 24px;text-align:center">
+              <div style="font-size:10px;color:var(--g3);letter-spacing:2px;margin-bottom:12px">NETWORK GROWTH</div>
+              <div style="font-family:'Fraunces',serif;font-size:52px;font-weight:900;color:#fff;line-height:1">+200</div>
+              <div style="font-size:13px;color:rgba(255,255,255,.5);margin-top:6px">new food bank partners<br>onboarded per year</div>
+            </div>
+
+            <div style="background:rgba(0,0,0,.25);border:1px solid rgba(114,198,138,.2);border-radius:18px;padding:28px 24px;text-align:center">
+              <div style="font-size:10px;color:var(--g3);letter-spacing:2px;margin-bottom:12px">CORPORATE PIPELINE</div>
+              <div style="font-family:'Fraunces',serif;font-size:52px;font-weight:900;color:#fff;line-height:1">+8</div>
+              <div style="font-size:13px;color:rgba(255,255,255,.5);margin-top:6px">new Ornua-type sponsors<br>activated annually</div>
+            </div>
+
+            <div style="background:rgba(0,0,0,.25);border:1px solid rgba(114,198,138,.2);border-radius:18px;padding:28px 24px;text-align:center">
+              <div style="font-size:10px;color:var(--g3);letter-spacing:2px;margin-bottom:12px">THROUGHPUT VALUE</div>
+              <div style="font-family:'Fraunces',serif;font-size:52px;font-weight:900;color:#fff;line-height:1">$5M+</div>
+              <div style="font-size:13px;color:rgba(255,255,255,.5);margin-top:6px">total product + donation<br>value by Year 2</div>
+            </div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px">
+            <div style="background:rgba(196,181,253,.06);border:1px solid rgba(196,181,253,.15);border-radius:16px;padding:24px">
+              <div style="font-size:10px;color:var(--pl);letter-spacing:2px;margin-bottom:14px">OPERATIONAL SAVINGS</div>
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+                <span style="font-size:13px;color:rgba(255,255,255,.6)">Current estimated ops cost</span>
+                <span style="font-size:16px;font-weight:700;color:rgba(255,255,255,.7);text-decoration:line-through">$1.3M/yr</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+                <span style="font-size:13px;color:rgba(255,255,255,.6)">With Mission 360™ automation</span>
+                <span style="font-size:18px;font-weight:800;color:var(--g3)">~$250K/yr</span>
+              </div>
+              <div style="border-top:1px solid rgba(255,255,255,.08);padding-top:14px;display:flex;justify-content:space-between;align-items:center">
+                <span style="font-size:12px;color:rgba(255,255,255,.5)">You free up every year</span>
+                <span style="font-family:'Fraunces',serif;font-size:32px;font-weight:900;color:#fff">$1M+</span>
+              </div>
+              <p style="font-size:10px;color:rgba(255,255,255,.3);margin-top:10px">Reinvest directly into food, programs & mission impact.</p>
+            </div>
+
+            <div style="background:rgba(114,198,138,.08);border:1px solid rgba(114,198,138,.2);border-radius:16px;padding:24px">
+              <div style="font-size:10px;color:var(--g3);letter-spacing:2px;margin-bottom:14px">NEW REVENUE & DONATIONS</div>
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+                <span style="font-size:13px;color:rgba(255,255,255,.6)">New B2B order revenue (est.)</span>
+                <span style="font-size:18px;font-weight:700;color:#fff">$1.5M–$2M</span>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+                <span style="font-size:13px;color:rgba(255,255,255,.6)">New corporate sponsorships</span>
+                <span style="font-size:18px;font-weight:700;color:#fff">$500K–$1M</span>
+              </div>
+              <div style="border-top:1px solid rgba(255,255,255,.08);padding-top:14px;display:flex;justify-content:space-between;align-items:center">
+                <span style="font-size:12px;color:rgba(255,255,255,.5)">Total new value Year 2</span>
+                <span style="font-family:'Fraunces',serif;font-size:32px;font-weight:900;color:var(--g3)">$2.5M+</span>
+              </div>
+              <p style="font-size:10px;color:rgba(255,255,255,.3);margin-top:10px">On top of your existing $2–3M baseline. Pure additive growth.</p>
+            </div>
+          </div>
+
+        </div>
+
+
+        <!-- ═══════════════════════════════════════════════════════
+             SEZIONE 3 — SOLO ORA: I PREZZI
+             ═══════════════════════════════════════════════════════ -->
+        <div class="offer-card" style="padding:52px">
+          <div class="offer-tag"><span>🤝 THE INVESTMENT — HOW WE WORK TOGETHER</span></div>
+          <h3 style="font-size:38px;margin-bottom:12px">Two Ways to Start.<br>One Direction: Forward.</h3>
+          <p style="font-size:15px;color:rgba(255,255,255,.6);max-width:640px;margin:0 auto 40px;line-height:1.8">
+            Choose the structure that fits your planning horizon. Either way, the system is fully deployed and generating results from day one.
+          </p>
+
+          <!-- HOVER STYLES -->
+          <style>
+            .pcard { transition: transform .3s cubic-bezier(.34,1.56,.64,1), box-shadow .3s ease, background .3s ease; cursor: default; }
+            .pcard:hover { transform: translateY(-8px) scale(1.01); }
+            .pcard-q { background: #0e160f; }
+            .pcard-q:hover { background: #141f15; box-shadow: 0 24px 60px rgba(0,0,0,.3); }
+            .pcard-a:hover { box-shadow: 0 24px 80px rgba(196,181,253,.4); }
+            .pline { display:flex; justify-content:space-between; align-items:center; padding:13px 18px; border-radius:12px; margin-bottom:8px; }
+            .pcards-wrap { display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:32px; }
+          </style>
+
+          <!-- INTESTAZIONE SEZIONE -->
+          <div style="text-align:center;margin-bottom:40px">
+            <h3 style="font-family:'Fraunces',serif;font-size:40px;color:#fff;margin-bottom:10px;line-height:1.15">Two Ways to Start.<br><em style="color:var(--pl)">One Direction: Forward.</em></h3>
+            <p style="font-size:14px;color:rgba(255,255,255,.45);max-width:480px;margin:0 auto">Same platform. Same AI engine. Same 15 months covered.<br>Only the payment structure changes—and so does what you spend.</p>
+          </div>
+
+          <!-- CARDS WRAPPER — stretch for equal height -->
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:32px;align-items:stretch">
+
+            <!-- ══ OPTION A — QUARTERLY ══ -->
+            <div class="pcard pcard-q" style="border:1px solid rgba(255,255,255,.12);border-radius:28px;padding:36px 32px;position:relative;display:flex;flex-direction:column">
+
+              <div style="display:inline-block;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:30px;padding:5px 14px;font-size:9px;font-weight:700;color:rgba(255,255,255,.45);letter-spacing:2px;margin-bottom:20px;align-self:flex-start">OPTION A</div>
+
+              <h4 style="font-family:'Fraunces',serif;font-size:26px;color:rgba(255,255,255,.8);margin-bottom:6px;line-height:1.2">Quarterly Flex</h4>
+              <p style="font-size:12px;color:rgba(255,255,255,.38);margin-bottom:28px;line-height:1.5">No annual commitment. Renews every 3 months automatically, for as long as you need the platform.</p>
+
+              <!-- TIMELINE STEPS — flex layout con min-width:0 per evitare overflow -->
+              <div style="margin-bottom:24px;flex:1">
+                <div style="font-size:9px;color:rgba(255,255,255,.28);letter-spacing:2px;margin-bottom:14px">HOW IT FLOWS</div>
+
+                <!-- Step 1 -->
+                <div style="display:flex;gap:12px;margin-bottom:0">
+                  <div style="display:flex;flex-direction:column;align-items:center;flex-shrink:0">
+                    <div style="width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.13);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:rgba(255,255,255,.45)">1</div>
+                    <div style="width:1px;height:36px;background:rgba(255,255,255,.07);margin:4px 0"></div>
+                  </div>
+                  <div style="flex:1;min-width:0;padding-top:2px;padding-bottom:14px">
+                    <div style="display:flex;justify-content:space-between;align-items:baseline;gap:6px">
+                      <div style="font-size:12px;font-weight:700;color:rgba(255,255,255,.7);min-width:0;overflow:hidden">Setup &amp; deployment <span style="color:rgba(255,255,255,.35);font-weight:400">· one-time</span></div>
+                      <span style="font-size:18px;font-weight:800;color:rgba(255,255,255,.6);white-space:nowrap;flex-shrink:0">$90K</span>
+                    </div>
+                    <div style="font-size:10px;color:rgba(255,255,255,.3);margin-top:2px">Full platform build &amp; integration</div>
+                  </div>
+                </div>
+
+                <!-- Step 2 -->
+                <div style="display:flex;gap:12px;margin-bottom:0">
+                  <div style="display:flex;flex-direction:column;align-items:center;flex-shrink:0">
+                    <div style="width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.13);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:rgba(255,255,255,.45)">2</div>
+                    <div style="width:1px;height:36px;background:rgba(255,255,255,.07);margin:4px 0"></div>
+                  </div>
+                  <div style="flex:1;min-width:0;padding-top:2px;padding-bottom:14px">
+                    <div style="display:flex;justify-content:space-between;align-items:baseline;gap:6px">
+                      <div style="font-size:12px;font-weight:700;color:rgba(255,255,255,.7);min-width:0">First 3 months of operations</div>
+                      <span style="font-size:18px;font-weight:800;color:rgba(255,255,255,.6);white-space:nowrap;flex-shrink:0">$60K</span>
+                    </div>
+                    <div style="font-size:10px;color:rgba(255,255,255,.3);margin-top:2px">Platform live · partners onboarding · AI running</div>
+                  </div>
+                </div>
+
+                <!-- Step 3 — recurring -->
+                <div style="display:flex;gap:12px">
+                  <div style="flex-shrink:0;width:26px;display:flex;justify-content:center;padding-top:2px">
+                    <div style="width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,.04);border:1px dashed rgba(255,255,255,.12);display:flex;align-items:center;justify-content:center;font-size:13px;color:rgba(255,255,255,.25)">↻</div>
+                  </div>
+                  <div style="flex:1;min-width:0;padding-top:2px">
+                    <div style="display:flex;justify-content:space-between;align-items:baseline;gap:6px">
+                      <div style="font-size:12px;font-weight:700;color:rgba(255,255,255,.42);min-width:0">$60K every quarter · ongoing</div>
+                      <span style="font-size:13px;font-weight:600;color:rgba(255,255,255,.25);white-space:nowrap;flex-shrink:0">$60K/q</span>
+                    </div>
+                    <div style="font-size:10px;color:rgba(255,255,255,.25);margin-top:2px">Auto-renews. Cancel any quarter with 30 days notice.</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- PRIMA TRANSAZIONE -->
+              <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:14px 16px;margin-bottom:20px">
+                <div style="font-size:9px;color:rgba(255,255,255,.25);letter-spacing:2px;margin-bottom:7px">FIRST INVOICE TO LAUNCH</div>
+                <div style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+                  <div style="font-size:11px;color:rgba(255,255,255,.42);min-width:0">$90K setup + $60K first quarter</div>
+                  <div style="font-size:22px;font-weight:900;color:rgba(255,255,255,.62);white-space:nowrap;flex-shrink:0">$150K</div>
+                </div>
+                <div style="font-size:10px;color:rgba(255,255,255,.25);margin-top:5px">6 months covered from day one · next invoice in 90 days</div>
+              </div>
+
+              <!-- TOTALE COMPARATIVO — presente ma non aggressivamente cancellato -->
+              <div style="border-top:1px solid rgba(255,255,255,.07);padding-top:18px;margin-top:auto">
+                <div style="font-size:9px;color:rgba(255,255,255,.22);letter-spacing:1.5px;margin-bottom:6px">OVER THE SAME 15 MONTHS AS OPTION B</div>
+                <div style="display:flex;justify-content:space-between;align-items:baseline">
+                  <div style="font-size:11px;color:rgba(255,255,255,.28)">you would spend</div>
+                  <div style="font-family:'Fraunces',serif;font-size:44px;font-weight:900;color:rgba(255,255,255,.3);line-height:1">$330K</div>
+                </div>
+              </div>
+            </div>
+
+
+            <!-- ══ OPTION B — ANNUAL ══ -->
+            <div class="pcard pcard-a" style="background:linear-gradient(150deg,#1c0b40 0%,#2a0e60 50%,#1a0a38 100%);border:2px solid #C4B5FD;border-radius:28px;padding:36px 32px;position:relative;box-shadow:0 12px 48px rgba(196,181,253,.2);display:flex;flex-direction:column">
+
+              <div style="position:absolute;top:0;right:0;width:160px;height:160px;background:radial-gradient(circle,rgba(196,181,253,.1) 0%,transparent 70%);pointer-events:none;border-radius:0 28px 0 0"></div>
+              <div style="position:absolute;top:-14px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#e0d4ff,#C4B5FD);color:#1a0a3a;font-size:9px;font-weight:900;padding:7px 22px;border-radius:30px;white-space:nowrap;letter-spacing:1.5px;box-shadow:0 4px 16px rgba(196,181,253,.4)">⚡ BEST VALUE — SAVE $31K</div>
+
+              <div style="display:inline-block;background:rgba(196,181,253,.15);border:1px solid rgba(196,181,253,.3);border-radius:30px;padding:5px 14px;font-size:9px;font-weight:700;color:var(--pl);letter-spacing:2px;margin-bottom:20px;margin-top:8px;align-self:flex-start">OPTION B</div>
+
+              <h4 style="font-family:'Fraunces',serif;font-size:26px;color:#fff;margin-bottom:6px;line-height:1.2">All-In-One Annual</h4>
+              <p style="font-size:12px;color:rgba(255,255,255,.5);margin-bottom:28px;line-height:1.5">One payment. 15 months fully covered from day one. No quarterly invoices, no surprises.</p>
+
+              <!-- BREAKDOWN -->
+              <div style="flex:1">
+                <div style="font-size:9px;color:rgba(196,181,253,.5);letter-spacing:2px;margin-bottom:12px">WHAT YOU PAY · ONCE</div>
+
+                <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:13px 16px;background:rgba(196,181,253,.07);border:1px solid rgba(196,181,253,.12);border-radius:12px;margin-bottom:8px">
+                  <div style="flex:1;min-width:0">
+                    <div style="font-size:12px;font-weight:700;color:#fff">Setup &amp; deployment <span style="color:rgba(255,255,255,.4);font-weight:400">· one-time</span></div>
+                    <div style="font-size:10px;color:rgba(255,255,255,.35);margin-top:2px">Full platform build &amp; integration</div>
+                  </div>
+                  <span style="font-size:20px;font-weight:800;color:#fff;white-space:nowrap;flex-shrink:0">$77K</span>
+                </div>
+
+                <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:13px 16px;background:rgba(196,181,253,.07);border:1px solid rgba(196,181,253,.12);border-radius:12px;margin-bottom:16px">
+                  <div style="flex:1;min-width:0">
+                    <div style="font-size:12px;font-weight:700;color:#fff">12 months full operations</div>
+                    <div style="font-size:10px;color:rgba(255,255,255,.35);margin-top:2px">$18,500/mo · AI engine, partners, logistics, reporting</div>
+                  </div>
+                  <span style="font-size:20px;font-weight:800;color:#fff;white-space:nowrap;flex-shrink:0">$222K</span>
+                </div>
+
+                <!-- COVERAGE — box semplici affiancati, no barra con testo sovrapposto -->
+                <div style="background:rgba(196,181,253,.07);border:1px solid rgba(196,181,253,.16);border-radius:14px;padding:14px 16px;margin-bottom:16px">
+                  <div style="font-size:9px;color:rgba(196,181,253,.5);letter-spacing:2px;margin-bottom:10px">COVERAGE</div>
+                  <div style="display:flex;gap:6px;align-items:stretch;margin-bottom:10px">
+                    <div style="flex:1;background:rgba(196,181,253,.1);border-radius:8px;padding:8px;text-align:center">
+                      <div style="font-size:10px;font-weight:700;color:rgba(196,181,253,.7);white-space:nowrap">Months 1–3</div>
+                      <div style="font-size:9px;color:rgba(255,255,255,.35);margin-top:2px">Deploy &amp; build</div>
+                    </div>
+                    <div style="display:flex;align-items:center;color:rgba(196,181,253,.3);font-size:16px;flex-shrink:0">→</div>
+                    <div style="flex:3;background:linear-gradient(135deg,rgba(196,181,253,.18),rgba(196,181,253,.1));border-radius:8px;padding:8px;text-align:center;border:1px solid rgba(196,181,253,.2)">
+                      <div style="font-size:10px;font-weight:700;color:#C4B5FD;white-space:nowrap">Months 4–15</div>
+                      <div style="font-size:9px;color:rgba(255,255,255,.5);margin-top:2px">Full live operations</div>
+                    </div>
+                  </div>
+                  <div style="font-size:11px;color:rgba(255,255,255,.55);line-height:1.5">3 months build + 12 months live = <strong style="color:#fff">15 months fully covered</strong></div>
+                </div>
+              </div>
+
+              <!-- TOTALE + RISPARMIO -->
+              <div style="border-top:1px solid rgba(196,181,253,.2);padding-top:20px;margin-top:auto">
+                <div style="font-size:9px;color:rgba(196,181,253,.5);letter-spacing:2px;margin-bottom:8px">TOTAL · ONE PAYMENT · 15 MONTHS</div>
+                <div style="display:flex;align-items:flex-end;gap:14px;margin-bottom:10px">
+                  <div style="font-family:'Fraunces',serif;font-size:64px;font-weight:900;color:#fff;line-height:1">$299K</div>
+                  <div style="padding-bottom:8px">
+                    <div style="font-size:10px;color:rgba(255,255,255,.4)">vs $330K with Option A</div>
+                    <div style="background:#C4B5FD;color:#1a0a3a;font-size:11px;font-weight:900;padding:3px 10px;border-radius:20px;display:inline-block;margin-top:4px">SAVE $31K</div>
+                  </div>
+                </div>
+                <div style="font-size:11px;color:rgba(196,181,253,.5);font-style:italic">That $31K buys 25,000+ meals.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- BRIDGE — la chiusura logica -->
+          <div style="background:linear-gradient(135deg,rgba(196,181,253,.08) 0%,rgba(196,181,253,.03) 100%);border:1px solid rgba(196,181,253,.15);border-radius:18px;padding:22px 32px;margin-bottom:36px;display:flex;align-items:center;justify-content:space-between;gap:24px">
+            <p style="font-size:14px;color:rgba(255,255,255,.65);line-height:1.7;margin:0;max-width:500px">
+              Same platform. Same 15 months. Same results.<br>
+              <strong style="color:#fff">Option B is $31K cheaper and eliminates quarterly billing friction.</strong><br>
+              <span style="font-size:12px;color:rgba(255,255,255,.35)">There is no scenario where Option A makes more sense.</span>
+            </p>
+            <div style="white-space:nowrap;text-align:center;flex-shrink:0">
+              <div style="font-size:9px;color:rgba(196,181,253,.5);letter-spacing:2px;margin-bottom:6px">THE OBVIOUS CHOICE</div>
+              <div style="font-family:'Fraunces',serif;font-size:28px;font-weight:900;color:#C4B5FD;line-height:1">Annual · $299K</div>
+              <div style="font-size:10px;color:rgba(255,255,255,.3);margin-top:4px">one payment · 15 months covered</div>
+            </div>
+          </div>
+
+          <!-- SUCCESS FEE — SOLO ALLA FINE, SOLO SU CRESCITA -->
+          <div style="background:rgba(196,181,253,.06);border:1px dashed rgba(196,181,253,.25);border-radius:20px;padding:32px;margin-bottom:32px">
+            <div style="text-align:center;margin-bottom:24px">
+              <span style="font-size:10px;font-weight:700;color:var(--pl);letter-spacing:2px">⚡ SUCCESS FEE — ONLY ON GROWTH WE CREATE TOGETHER</span>
+              <p style="font-size:13px;color:rgba(255,255,255,.5);margin-top:8px">No growth = no success fee. We only earn more when you earn more.</p>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px">
+              <div style="text-align:center;padding:20px;background:rgba(0,0,0,.2);border-radius:14px">
+                <div style="font-family:'Fraunces',serif;font-size:42px;font-weight:900;color:var(--pl)">3%</div>
+                <div style="font-size:12px;font-weight:700;color:#fff;margin:8px 0 4px">New B2B Orders</div>
+                <div style="font-size:10px;color:rgba(255,255,255,.4)">On every new food bank order processed through the platform</div>
+              </div>
+              <div style="text-align:center;padding:20px;background:rgba(0,0,0,.2);border-radius:14px">
+                <div style="font-family:'Fraunces',serif;font-size:42px;font-weight:900;color:var(--pl)">5%</div>
+                <div style="font-size:12px;font-weight:700;color:#fff;margin:8px 0 4px">Corporate Deals</div>
+                <div style="font-size:10px;color:rgba(255,255,255,.4)">On new sponsorships & partnerships activated through the system</div>
+              </div>
+              <div style="text-align:center;padding:20px;background:rgba(0,0,0,.2);border-radius:14px">
+                <div style="font-family:'Fraunces',serif;font-size:42px;font-weight:900;color:var(--pl)">15%</div>
+                <div style="font-size:12px;font-weight:700;color:#fff;margin:8px 0 4px">Logistics Savings</div>
+                <div style="font-size:10px;color:rgba(255,255,255,.4)">On verified cost reductions from route optimization & automation</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- CHIUSURA -->
+          <div style="background:rgba(0,0,0,.2);border-radius:16px;padding:28px;text-align:center">
+            <p style="font-size:14px;color:rgba(255,255,255,.7);line-height:1.9;max-width:640px;margin:0 auto">
+              <strong style="color:#fff;font-size:18px">The question isn't whether you can afford the investment.</strong><br>
+              It's whether you can afford to keep a $1.3M/year manual operation<br>
+              when <strong style="color:var(--g3)">$2.5M+ in new value is waiting on the other side.</strong>
+            </p>
+          </div>
+
+        </div><!-- end offer-card -->
+
+      </div><!-- end pricing-body -->
+    </div><!-- end pricing-outer -->
+  </div><!-- end pricing-section -->
+
+  <!-- CLOSING -->
+  <div class="closing reveal scene">
+    <h2>One year from now,<br>this looks <em>completely different.</em></h2>
+    <p style="margin-top:20px">This isn't about spending $300,000. It's about directing $1.267M away from traditional overhead and into a machine that will generate millions in lifetime donor value, rescue millions more pounds of food, and build a brand that dominates the national conversation.<br><br>The question isn't "can we afford this?" It's "can we afford to let our competitors figure this out first?"</p>
+  </div>
+
+</div>
+
+<script>
+/* ══════════════════════════════════════
+   CINEMATIC INTRO — UNCHANGED
+══════════════════════════════════════ */
+const lines = ['l1','l2','l3','l4'];
+const delays = [400, 900, 2200, 2800];
+let introDone = false;
+lines.forEach((id,i) => {
+  setTimeout(() => { const el=document.getElementById(id); if(el) el.classList.add('show'); }, delays[i]);
+});
+setTimeout(() => { if(!introDone) dismissIntro(); }, 4800);
+function dismissIntro(){ if(introDone)return; introDone=true; document.getElementById('cinematic').classList.add('gone'); }
+function skipIntro(){ dismissIntro(); }
+
+/* ══════════════════════════════════════
+   SCROLL REVEAL — UNCHANGED
+══════════════════════════════════════ */
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('vis'); });
+}, {threshold: 0.08});
+document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+/* ══════════════════════════════════════
+   TYPEWRITER — UNCHANGED
+══════════════════════════════════════ */
+const quotes = [
+  "Just rescued 600 lbs of produce from a landfill. This food is heading to 80 families in Chicago tonight. 🌿",
+  "Every time I hear 'it's just food waste' I think about the family that ate tonight because someone disagreed. This matters.",
+  "The grocery store said this bread was 'too old.' Looks pretty perfect to me. And to the 4 families who got it. 🍞",
+  "We don't save food. We save the conversations that happen around the table because of it. 💚",
+  "Woke up and already 3 DMs asking how to donate. Good morning America. Let's do this. 🌱",
+];
+let qIdx=0,charIdx=0,typing=true,pauseCount=0;
+function typeNext(){
+  const el=document.getElementById('bubbleText');
+  if(!el)return;
+  const q=quotes[qIdx];
+  if(typing){
+    if(charIdx<q.length){ el.innerHTML=q.slice(0,charIdx+1)+'<span class="cursor"></span>'; charIdx++; setTimeout(typeNext,32+Math.random()*20); }
+    else{ typing=false; pauseCount=0; setTimeout(typeNext,2800); }
+  } else {
+    pauseCount++;
+    if(pauseCount>1){
+      if(charIdx>0){ charIdx-=2; if(charIdx<0)charIdx=0; el.innerHTML=q.slice(0,charIdx)+'<span class="cursor"></span>'; setTimeout(typeNext,14); }
+      else{ qIdx=(qIdx+1)%quotes.length; charIdx=0; typing=true; setTimeout(typeNext,400); }
+    } else { setTimeout(typeNext,1000); }
+  }
+}
+setTimeout(typeNext, 5200);
+
+/* ══════════════════════════════════════
+   3D CINEMATIC SCROLL ENGINE — UNCHANGED
+══════════════════════════════════════ */
+(function(){
+  const PERSP    = 1200;
+  const MAX_DEG  = 3.5;
+  const MAX_SCL  = 0.012;
+  const LERP_T   = 0.07;
+  const VEL_CAP  = 45;
+
+  let lastY     = window.scrollY;
+  let vel       = 0;
+  let targetVel = 0;
+  let raf       = null;
+
+  const scenes  = () => document.querySelectorAll('.scene');
+  function lerp(a,b,t){ return a+(b-a)*t; }
+
+  function tick(){
+    const y      = window.scrollY;
+    const raw    = y - lastY;
+    lastY        = y;
+    targetVel = Math.max(-VEL_CAP, Math.min(VEL_CAP, raw));
+    vel = lerp(vel, targetVel, LERP_T);
+    const n = vel / VEL_CAP;
+    const tiltX = -n * MAX_DEG;
+    const scale  = 1 - Math.abs(n) * MAX_SCL;
+    const vh = window.innerHeight;
+
+    scenes().forEach(el => {
+      const r = el.getBoundingClientRect();
+      if(r.bottom < -vh || r.top > vh * 2){ return; }
+      const dist = (r.top + r.height/2 - vh/2) / vh;
+      const localTilt = tiltX * (1 - Math.abs(dist) * 0.25);
+      el.style.transform =
+        `perspective(${PERSP}px) rotateX(${localTilt.toFixed(3)}deg) scale(${scale.toFixed(4)})`;
+    });
+
+    raf = requestAnimationFrame(tick);
+  }
+
+  raf = requestAnimationFrame(tick);
+
+  document.addEventListener('visibilitychange', () => {
+    if(document.hidden){ cancelAnimationFrame(raf); }
+    else { lastY=window.scrollY; raf=requestAnimationFrame(tick); }
+  });
+})();
+
+/* ══════════════════════════════════════
+   CUSTOM CURSOR
+══════════════════════════════════════ */
+(function(){
+  const cursor = document.getElementById('cursor');
+  const trail  = document.getElementById('cursor-trail');
+  if(!cursor || !trail) return;
+
+  document.addEventListener('mousemove', e => {
+    cursor.style.left = e.clientX+'px';
+    cursor.style.top  = e.clientY+'px';
+    trail.style.left  = e.clientX+'px';
+    trail.style.top   = e.clientY+'px';
+  });
+
+  const hoverEls = document.querySelectorAll('button,.pill,.pillar,.engine-card,.del,.rc,.story-card,.amb-traits li');
+  hoverEls.forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      cursor.style.width  = '20px';
+      cursor.style.height = '20px';
+      trail.style.width   = '60px';
+      trail.style.height  = '60px';
+    });
+    el.addEventListener('mouseleave', () => {
+      cursor.style.width  = '10px';
+      cursor.style.height = '10px';
+      trail.style.width   = '36px';
+      trail.style.height  = '36px';
+    });
+  });
+})();
+
+/* ══════════════════════════════════════
+   SCROLL PROGRESS BAR
+══════════════════════════════════════ */
+(function(){
+  const bar = document.getElementById('scroll-progress');
+  if(!bar) return;
+  function update(){
+    const s = window.scrollY;
+    const t = document.documentElement.scrollHeight - window.innerHeight;
+    bar.style.width = (t > 0 ? (s/t)*100 : 0) + '%';
+  }
+  window.addEventListener('scroll', update, {passive:true});
+  update();
+})();
+
+/* ══════════════════════════════════════
+   NAV DOTS
+══════════════════════════════════════ */
+(function(){
+  const dots = document.querySelectorAll('.nav-dot');
+  const sections = document.querySelectorAll('[data-section]');
+  const o = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if(e.isIntersecting){
+        const idx = e.target.dataset.section;
+        dots.forEach((d,i) => d.classList.toggle('active', String(i) === idx));
+      }
+    });
+  }, {threshold: 0.35});
+  sections.forEach(s => o.observe(s));
+})();
+
+/* ══════════════════════════════════════
+   HERO PARTICLES
+══════════════════════════════════════ */
+(function(){
+  const container = document.getElementById('heroParticles');
+  if(!container) return;
+  const colors = ['rgba(114,198,138,','rgba(196,181,253,','rgba(200,90,20,'];
+  for(let i=0;i<24;i++){
+    const p = document.createElement('div');
+    p.className = 'particle';
+    const size = 2+Math.random()*4;
+    const color = colors[Math.floor(Math.random()*colors.length)];
+    p.style.cssText = `left:${Math.random()*100}%;width:${size}px;height:${size}px;background:${color}${0.15+Math.random()*0.3});animation-duration:${8+Math.random()*16}s;animation-delay:${Math.random()*12}s;`;
+    container.appendChild(p);
+  }
+})();
+</script>
+</body>
+</html>
